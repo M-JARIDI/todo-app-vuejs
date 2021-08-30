@@ -14,7 +14,7 @@
             <h3>{{ todo }}</h3>
           </div>
           <div class="content">
-            <i class="far fa-times-circle fa-2x" @click="Completed(index)"></i>
+            <i class="fa fa-trash" @click="Completed(index)"></i>
           </div>
         </li>
       </ul>
@@ -34,7 +34,8 @@ export default {
     const newTodo = ref("");
     let Alltodos = ref([]);
 
-    const API_URL = "http://localhost:8000";
+    // const API_URL = "http://localhost:8000";
+    const API_URL = "https://todo-app-vuejs.herokuapp.com/";
 
     const getTodos = () => {
       axios
