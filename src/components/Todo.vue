@@ -33,25 +33,26 @@ export default {
   setup() {
     const newTodo = ref("");
     let Alltodos = ref([]);
+
+    const API_URL = "http://localhost:8000";
+
     const getTodos = () => {
       axios
-        .get(`http://localhost:8000`)
+        .get(API_URL)
         .then((response) => {
-          console.log("response get", response.data);
           Alltodos.value = response.data.slice();
-          console.log("taaaaaayb", Alltodos);
         })
         .catch((error) => {
           console.log("error", error);
         });
     };
+    //api call to retrieve all todos
     getTodos();
 
     const OnSubmit = () => {
       axios
-        .post(`http://localhost:8000`, { todo: newTodo.value })
+        .post(API_URL, { todo: newTodo.value })
         .then((response) => {
-          console.log("response added", response.data);
           Alltodos.value.push(response.data);
           newTodo.value = "";
         })
@@ -60,11 +61,10 @@ export default {
         });
     };
     const Completed = (index) => {
-      if (confirm("are you sure")) {
+      if (confirm("are you sure!!")) {
         axios
-          .delete(`http://localhost:8000/${index}`, { todo: newTodo.value })
-          .then((response) => {
-            console.log("response delete", response.data);
+          .delete(`${API_URL}/${index}`, { todo: newTodo.value })
+          .then(() => {
             Alltodos.value.splice(index, 1);
           })
           .catch((error) => {
