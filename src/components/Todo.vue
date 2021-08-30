@@ -8,6 +8,13 @@
       </form>
     </div>
     <div class="todo-list">
+      <li v-if="Alltodos.length === 0" class="todo" style="margin-top: 1rem">
+        <div class="content">
+          <h3>No tasks</h3>
+        </div>
+      </li>
+    </div>
+    <div class="todo-list" v-if="Alltodos.length > 0">
       <ul>
         <li v-for="(todo, index) in Alltodos" :key="index" class="todo">
           <div class="content">
@@ -34,8 +41,8 @@ export default {
     const newTodo = ref("");
     let Alltodos = ref([]);
 
-    // const API_URL = "http://localhost:8000";
-    const API_URL = "https://todo-app-vuejs.herokuapp.com/";
+    const API_URL = "http://localhost:8000";
+    // const API_URL = "https://todo-app-vuejs.herokuapp.com/";
 
     const getTodos = () => {
       axios
