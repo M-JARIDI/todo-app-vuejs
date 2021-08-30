@@ -2,10 +2,26 @@
   <div>
     <h1>My Todo List</h1>
     <div class="todo-form">
-      <form @submit.prevent="OnSubmit">
-        <input v-model="newTodo" name="todo" placeholder="todo-name" />
-        <button>Add New Todo</button>
-      </form>
+      <div>
+        <form v-if="displayForm" @submit.prevent="OnSubmit">
+          <input
+            v-model="newTodo"
+            name="todo"
+            placeholder="todo-name"
+            required
+          />
+          <button class="addButton">Add New Todo</button>
+        </form>
+      </div>
+      <div>
+        <button
+          @click.prevent="openForm"
+          style="padding: 0.5rem 1rem"
+          :class="{ addButton: !displayForm, removeButton: displayForm }"
+        >
+          {{ displayForm ? "Close" : "Start adding tasks" }}
+        </button>
+      </div>
     </div>
     <div class="todo-list">
       <li v-if="Alltodos.length === 0" class="todo" style="margin-top: 1rem">
@@ -24,6 +40,9 @@
             <i class="fa fa-trash" @click="Completed(index)"></i>
           </div>
         </li>
+        <button @click.prevent="removeAll" class="removeButton">
+          Clear list
+        </button>
       </ul>
     </div>
   </div>
@@ -32,15 +51,13 @@
 <script>
 import { ref } from "vue";
 import axios from "axios";
-
 export default {
   name: "Todo",
   components: {},
-
   setup() {
     const newTodo = ref("");
     let Alltodos = ref([]);
-
+    let displayForm = ref(false);
     const API_URL = "http://localhost:8000";
     // const API_URL = "https://todo-app-vuejs.herokuapp.com/";
 
@@ -57,6 +74,9 @@ export default {
     //api call to retrieve all todos
     getTodos();
 
+    const openForm = () => {
+      displayForm.value = !displayForm.value;
+    };
     const OnSubmit = () => {
       axios
         .post(API_URL, { todo: newTodo.value })
@@ -80,11 +100,27 @@ export default {
           });
       }
     };
+
+    const removeAll = () => {
+      if (confirm("are you sure!!")) {
+        axios
+          .delete(`${API_URL}/`)
+          .then(() => {
+            Alltodos.value.splice(0, Alltodos.value.length);
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
+      }
+    };
     return {
       newTodo,
       OnSubmit,
       Alltodos,
       Completed,
+      removeAll,
+      displayForm,
+      openForm,
     };
   },
 };
@@ -109,6 +145,10 @@ input {
 }
 .todo-form {
   margin-top: 30px;
+  display: flex;
+  justify-items: center;
+  flex-direction: row;
+  justify-content: center;
 }
 .todo {
   margin-bottom: 20px;
@@ -126,7 +166,12 @@ button {
   font-weight: bold;
   outline: none;
 }
-
+.removeButton {
+  background-color: red;
+}
+.addButton {
+  background-color: green;
+}
 h3 {
   margin: 0px;
   padding: 0px;
